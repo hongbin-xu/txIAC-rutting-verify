@@ -1,26 +1,36 @@
 import streamlit as st
-from streamlit_gallery import apps, components
-from streamlit_gallery.utils.page import page_group
+import pandas as pd
+import numpy as np
 
-def main():
-    page = page_group("p")
+st.title('IAC-Rutting Verification')
 
-    with st.sidebar:
-        st.title("🎈 Okld's Gallery")
+DATE_COLUMN = 'date/time'
+DATA_URL = ('https://s3-us-west-2.amazonaws.com/'
+            'streamlit-demo-data/uber-raw-data-sep14.csv.gz')
 
-        with st.expander("✨ APPS", True):
-            page.item("Streamlit gallery", apps.gallery, default=True)
+@st.cache_data
+def load_data(nrows):
+    data = pd.read_csv(DATA_URL, nrows=nrows)
+    lowercase = lambda x: str(x).lower()
+    data.rename(lowercase, axis='columns', inplace=True)
+    data[DATE_COLUMN] = pd.to_datetime(data[DATE_COLUMN])
+    return data
 
-        with st.expander("🧩 COMPONENTS", True):
-            page.item("Ace editor", components.ace_editor)
-            page.item("Disqus", components.disqus)
-            page.item("Elements⭐", components.elements)
-            page.item("Pandas profiling", components.pandas_profiling)
-            page.item("Quill editor", components.quill_editor)
-            page.item("React player", components.react_player)
+data_load_state = st.text('Loading data...')
+data = load_data(10000)
+data_load_state.text("Done! (using st.cache_data)")
 
-    page.show()
+if st.checkbox('Show raw data'):
+    st.subheader('Raw data')
+    st.write(data)
 
-if __name__ == "__main__":
-    st.set_page_config(page_title="Streamlit Gallery by Okld", page_icon="🎈", layout="wide")
-    main()
+st.subheader('Number of pickups by hour')
+hist_values = np.histogram(data[DATE_COLUMN].dt.hour, bins=24, range=(0,24))[0]
+st.bar_chart(hist_values)
+
+# Some number in the range 0-23
+hour_to_filter = st.slider('hour', 0, 23, 17)
+filtered_data = data[data[DATE_COLUMN].dt.hour == hour_to_filter]
+
+st.subheader('Map of all pickups at %s:00' % hour_to_filter)
+st.map(filtered_data)
