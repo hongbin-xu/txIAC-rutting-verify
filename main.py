@@ -5,6 +5,9 @@ import streamlit_authenticator as stauth
 
 st.title('IAC-Rutting Verification')
 
+with st.sidebar:
+     st.write("IAC: Rutting measurement verification")
+
 DATE_COLUMN = 'date/time'
 DATA_URL = ('https://s3-us-west-2.amazonaws.com/'
             'streamlit-demo-data/uber-raw-data-sep14.csv.gz')
