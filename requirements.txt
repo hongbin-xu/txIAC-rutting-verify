@@ -1,1 +1,3 @@
-streamlit-authenticator
+# requirements.txt
+mysqlclient
+SQLAlchemy
