@@ -19,7 +19,7 @@ with st.sidebar:
     st.text("Presented by Hongbin Xu and Jorge Prozzi")
     st.text("The University of Texas at Austin")
 
-conn = st.experimental_connection('mysql', type='sql')
+#conn = st.experimental_connection('mysql', type='sql')
 
 @st.cache_data
 def load_data(nrows):
