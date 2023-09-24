@@ -1,4 +1,4 @@
 # requirements.txt
-SQLAlchemy
-MySQLdb
 mysqlclient
+SQLAlchemy
+
