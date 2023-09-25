@@ -48,12 +48,12 @@ def dataLoad(_conn, segID):
 def scanDataExtra(segData, scanID):
     # Extract transverse profile
     scanData = segData.loc[segData["scanID"]==scanID, ["tranStep", "depth"]].reset_index(drop=True)
-    scanData_v1 = pd.DataFrame({"DIST":scanData["tranStep"][0]*np.arange(1536), "HEIGHT":np.array(scanData["depth"][0].split(b",")).astype("float")})
+    scanData_v1 = pd.DataFrame({"DIST":scanData["tranStep"][0]*np.arange(1536), "Height":np.array(scanData["depth"][0].split(b",")).astype("float")})
     return scanData_v1
 
 @st.cache_data
 def surfPlot(dataArray, tranStep, lonStep):
-    fig = px.imshow(dataArray, origin = "lower", labels = {"x": "Transverse (mm)", "y": "Longitudinal (mm)", "color": "HEIGHT (mm)"},
+    fig = px.imshow(dataArray, origin = "lower", labels = {"x": "Transverse (mm)", "y": "Longitudinal (mm)", "color": "Height (mm)"},
                     x =np.arange(1536)*tranStep,
                     y = np.arange(900)*lonStep,
                    aspect="auto", 
@@ -92,11 +92,7 @@ if check_password():
             # plot surface
             with st.container():
                 surfPlot(dataArray=dataArray, tranStep=tranStep, lonStep=lonStep)
-                #fig = px.imshow(dataArray, origin = "lower", labels = {"x": "Transverse (mm)", "y": "Longitudinal (mm)", "color": "DEPTH (mm)"},
-                #                x =np.arange(1536)*tranStep,
-                #                y = np.arange(900)*lonStep)
-                #fig.update_layout(legend = {"xanchor": "right", "x": 1.08})
-                #st.plotly_chart(fig)
+
     
     with col2:
         with st.container():
@@ -108,7 +104,7 @@ if check_password():
             scanData_v1 = scanDataExtra(segData = data, scanID=scanID)
             
             # Plot transverse profile
-            fig = px.line(scanData_v1, x="DIST", y="HEIGHT", labels = {"DIST": "DISTANCE (mm)", "HEIGHT": "HEIGHT (mm}"}, template = "plotly_dark")
+            fig = px.line(scanData_v1, x="DIST", y="HEIGHT", labels = {"DIST": "DISTANCE (mm)", "Height": "Height (mm}"}, template = "plotly_dark")
             st.plotly_chart(fig)
 
             # View and download data
