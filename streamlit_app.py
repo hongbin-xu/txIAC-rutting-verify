@@ -54,7 +54,7 @@ if check_password():
     
     # MySQL connection
     conn = st.experimental_connection('mysql', type='sql')
-    col1, col2 = st.columns([5,3], gap = "medium")
+    col1, col2 = st.columns(2, gap = "medium")
     with col1:
         with st.container():
             st.subheader("Suface")
@@ -75,6 +75,7 @@ if check_password():
                 fig = px.imshow(dataArray, origin = "lower", labels = {"x": "Transverse (mm)", "y": "Longitudinal (mm)", "color": "DEPTH (mm)"},
                                 x =np.arange(1536)*tranStep,
                                 y = np.arange(900)*lonStep)
+                fig.update_layout(legend={"x" : 1.02})
                 st.plotly_chart(fig)
     
     with col2:
