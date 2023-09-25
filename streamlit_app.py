@@ -106,7 +106,7 @@ if check_password():
             scanData_v1 = scanDataExtra(segData = data, scanID=scanID)
             
             # Plot transverse profile
-            fig = px.line(scanData_v1, x="DIST", y="DEPTH", labels = {"DIST": "DISTANCE (mm)", "DEPTH": "DEPTH (mm}"})
+            fig = px.line(scanData_v1, x="DIST", y="DEPTH", labels = {"DIST": "DISTANCE (mm)", "DEPTH": "DEPTH (mm}"}, template = "plotly_dark")
             st.plotly_chart(fig)
 
             # View and download data
