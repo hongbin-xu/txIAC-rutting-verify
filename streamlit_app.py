@@ -71,6 +71,7 @@ if check_password():
             # plot surface
             with st.container():
                 fig = px.imshow(dataArray, aspect = data["lonStep"].mean()/data["tranStep"].mean())
+                st.plotly_chart(fig)
                 #filtered_data = data1[data1[DATE_COLUMN].dt.hour == hour_to_filter]
                 #st.map(filtered_data)
     
