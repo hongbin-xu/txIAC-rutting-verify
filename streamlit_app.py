@@ -84,7 +84,7 @@ if check_password():
                 scanID = st.number_input("Scan ID", min_value=0, max_value=899, step = 1)
             
             # Load data
-            data, tranStep, lonStep, dataArray = dataLoad(conn=conn, segID=segID)
+            data, tranStep, lonStep, dataArray = dataLoad(_conn=conn, segID=segID)
             
             # plot surface
             with st.container():
