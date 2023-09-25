@@ -56,6 +56,7 @@ def surfPlot(dataArray, tranStep, lonStep):
     fig = px.imshow(dataArray, origin = "lower", labels = {"x": "Transverse (mm)", "y": "Longitudinal (mm)", "color": "Height (mm)"},
                     x =np.arange(1536)*tranStep,
                     y = np.arange(900)*lonStep,
+                    hovertemplate = "Longitudinal: %{y} <br> Transverse: %{x} <br>Height: %{color} </br> "
                    aspect="auto", 
                    height = 1200)
     fig.update_layout(showlegend=False)
@@ -104,7 +105,7 @@ if check_password():
             scanData_v1 = scanDataExtra(segData = data, scanID=scanID)
             
             # Plot transverse profile
-            fig = px.line(scanData_v1, x="DIST", y="Height", labels = {"DIST": "Distance (mm)", "Height": "Height (mm}"}, template = "plotly_dark")
+            fig = px.line(scanData_v1, x="DIST", y="Height", labels = {"DIST": "Transverse Distance (mm)", "Height": "Height (mm}"}, template = "plotly_dark")
             st.plotly_chart(fig)
 
             # View and download data
