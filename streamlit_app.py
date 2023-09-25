@@ -33,7 +33,7 @@ def check_password():
         return True
 
 @st.cache_data
-def dataLoad(conn, segID):
+def dataLoad(_conn, segID):
     """
     creating 2d array of the depth measurement
     """
