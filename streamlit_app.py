@@ -38,15 +38,25 @@ def dataLoad(conn, segID):
     creating 2d array of the depth measurement
     """
     data = conn.query('SELECT * from pathway_rawFM365_SEP13 WHERE segID =' + str(segID) +';')
-    return data
+    tranStep = data["tranStep"].mean()
+    lonStep = data["lonStep"].mean()
+    dataArray = np.array([np.array(data["depth"][i].split(b',')).astype("float") for i in range(data.shape[0])])
+    return data, tranStep, lonStep, dataArray
 
 @st.cache_data
-def dataProc(data):
-    """
-    creating 2d array of the depth measurement
-    """
-    dataArray = np.array([np.array(data["depth"][i].split(b',')).astype("float") for i in range(data.shape[0])])
-    return dataArray
+def scanDataExtra(segData, scanID):
+    # Extract transverse profile
+    scanData = segData.loc[segData["scanID"]==scanID, ["tranStep", "depth"]].reset_index(drop=True)
+    scanData_v1 = pd.DataFrame({"DIST":scanData["tranStep"][0]*np.arange(1536), "DEPTH":np.array(scanData["depth"][0].split(b",")).astype("float")})
+    return scanData_v1
+
+@st.cache_data
+def surfPlot(dataArray, tranStep, lonStep):
+    fig = px.imshow(dataArray, origin = "lower", labels = {"x": "Transverse (mm)", "y": "Longitudinal (mm)", "color": "DEPTH (mm)"},
+                    x =np.arange(1536)*tranStep,
+                    y = np.arange(900)*lonStep)
+    fig.update_layout(legend = {"xanchor": "right", "x": 1.08})
+    st.plotly_chart(fig)
 
 # Check authentication
 if check_password():    
@@ -74,27 +84,26 @@ if check_password():
                 scanID = st.number_input("Scan ID", min_value=0, max_value=899, step = 1)
             
             # Load data
-            data = dataLoad(conn, segID)
-            tranStep = data["tranStep"].mean()
-            lonStep = data["lonStep"].mean()
-            dataArray = dataProc(data) # 2D data array
-                
+            data, tranStep, lonStep, dataArray = dataLoad(conn=conn, segID=segID)
+            
             # plot surface
             with st.container():
-                fig = px.imshow(dataArray, origin = "lower", labels = {"x": "Transverse (mm)", "y": "Longitudinal (mm)", "color": "DEPTH (mm)"},
-                                x =np.arange(1536)*tranStep,
-                                y = np.arange(900)*lonStep)
-                fig.update_layout(legend = {"xanchor": "right", "x": 1.08})
-                st.plotly_chart(fig)
+                surfPlot(dataArray=dataArray, tranStep=tranStep, lonStep=lonStep)
+                #fig = px.imshow(dataArray, origin = "lower", labels = {"x": "Transverse (mm)", "y": "Longitudinal (mm)", "color": "DEPTH (mm)"},
+                #                x =np.arange(1536)*tranStep,
+                #                y = np.arange(900)*lonStep)
+                #fig.update_layout(legend = {"xanchor": "right", "x": 1.08})
+                #st.plotly_chart(fig)
     
     with col2:
         with st.container():
             st.subheader("Transverse Profile")
 
             # Extract transverse profile
-            scanData = data.loc[data["scanID"]==scanID, ["tranStep", "depth"]].reset_index(drop=True)
-            scanData_v1 = pd.DataFrame({"DIST":scanData["tranStep"][0]*np.arange(1536), "DEPTH":np.array(scanData["depth"][0].split(b",")).astype("float")})
-
+            #scanData = data.loc[data["scanID"]==scanID, ["tranStep", "depth"]].reset_index(drop=True)
+            #scanData_v1 = pd.DataFrame({"DIST":scanData["tranStep"][0]*np.arange(1536), "DEPTH":np.array(scanData["depth"][0].split(b",")).astype("float")})
+            scanData_v1 = scanDataExtra(segData = data, scanID=scanID)
+            
             # Plot transverse profile
             fig = px.line(scanData_v1, x="DIST", y="DEPTH", labels = {"DIST": "DISTANCE (mm)", "DEPTH": "DEPTH (mm}"})
             st.plotly_chart(fig)
