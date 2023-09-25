@@ -54,7 +54,7 @@ if check_password():
     
     # MySQL connection
     conn = st.experimental_connection('mysql', type='sql')
-    col1, col2 = st.columns([3,4])
+    col1, col2 = st.columns([3,4], gap = "medium")
     with col1:
         with st.container():
             st.subheader("Suface")
@@ -64,16 +64,14 @@ if check_password():
             with col12:
                 scanID = st.number_input("Scan ID", min_value=0, max_value=899, step = 1)
             
-            # Load data
-            data = conn.query('SELECT * from pathway_rawFM365_SEP13 WHERE segID =' + str(segID) +';')
-            dataArray = dataProc(data) # 2D data array
+        # Load data
+        data = conn.query('SELECT * from pathway_rawFM365_SEP13 WHERE segID =' + str(segID) +';')
+        dataArray = dataProc(data) # 2D data array
             
-            # plot surface
-            with st.container():
-                fig = px.imshow(dataArray, aspect = data["lonStep"].mean()/data["tranStep"].mean())
-                st.plotly_chart(fig)
-                #filtered_data = data1[data1[DATE_COLUMN].dt.hour == hour_to_filter]
-                #st.map(filtered_data)
+        # plot surface
+        with st.container():
+            fig = px.imshow(dataArray, aspect = , width=1536, height=data["lonStep"].mean()*900/data["tranStep"].mean())
+            st.plotly_chart(fig)
     
     with col2:
         with st.container():
