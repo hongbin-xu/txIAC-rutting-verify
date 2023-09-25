@@ -57,7 +57,7 @@ def surfPlot(dataArray, tranStep, lonStep):
                     x =np.arange(1536)*tranStep,
                     y = np.arange(900)*lonStep,
                    aspect="auto", 
-                   height = 800)
+                   height = 1200)
     fig.update_layout(showlegend=False)
     st.plotly_chart(fig, use_container_width=True, theme = None)
 
