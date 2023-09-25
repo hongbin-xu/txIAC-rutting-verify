@@ -69,8 +69,8 @@ if check_password():
             dataArray = dataProc(data) # 2D data array
             
             # plot surface
-            #with st.container():
-                # surface plot
+            with st.container():
+                fig = px.imshow(dataArray, aspect = data["lonStep"].mean()/data["tranStep"].mean())
                 #filtered_data = data1[data1[DATE_COLUMN].dt.hour == hour_to_filter]
                 #st.map(filtered_data)
     
@@ -87,12 +87,10 @@ if check_password():
             st.plotly_chart(fig)
 
             # View and download data
-            col21, col22=st.columns(2)
-            with col21:
-                if st.checkbox('Show raw transverse profile data'):
-                    st.write(scanData_v1)
-            with col22:
-                st.download_button(label="Download profile", data=scanData_v1.to_csv().encode('utf-8'), file_name="transProfile.csv", mime = "csv")
+            st.download_button(label="Download profile", data=scanData_v1.to_csv().encode('utf-8'), file_name="transProfile.csv", mime = "csv")
+            if st.checkbox('Show raw transverse profile data'):
+                st.write(scanData_v1)
+        
     
     
     
