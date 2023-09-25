@@ -33,13 +33,11 @@ def check_password():
         return True
 
 if check_password():
-    DATE_COLUMN = 'date/time'
-    DATA_URL = ('https://s3-us-west-2.amazonaws.com/'
-                'streamlit-demo-data/uber-raw-data-sep14.csv.gz')
     st.set_page_config(
         page_title='IAC-Rutting Verification', 
         )
-    
+
+    # Sidebar    
     with st.sidebar:
         st.title("TxDOT Inter-Agency Contract")
         st.subheader("Rutting Measurement Verification")
@@ -47,15 +45,9 @@ if check_password():
         st.text("Presented by Hongbin Xu and Jorge Prozzi")
         st.text("The University of Texas at Austin")
     
+    # mysql connection
     conn = st.experimental_connection('mysql', type='sql')
     
-    @st.cache_data
-    def load_data(nrows):
-        data = pd.read_csv(DATA_URL, nrows=nrows)
-        lowercase = lambda x: str(x).lower()
-        data.rename(lowercase, axis='columns', inplace=True)
-        data[DATE_COLUMN] = pd.to_datetime(data[DATE_COLUMN])
-        return data
     
     data_loading = st.text('Loading data...')
     data1 = load_data(10000)
