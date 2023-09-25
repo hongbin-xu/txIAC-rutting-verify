@@ -64,14 +64,14 @@ if check_password():
             with col12:
                 scanID = st.number_input("Scan ID", min_value=0, max_value=899, step = 1)
             
-        # Load data
-        data = conn.query('SELECT * from pathway_rawFM365_SEP13 WHERE segID =' + str(segID) +';')
-        dataArray = dataProc(data) # 2D data array
-            
-        # plot surface
-        with st.container():
-            fig = px.imshow(dataArray)
-            st.plotly_chart(fig)
+            # Load data
+            data = conn.query('SELECT * from pathway_rawFM365_SEP13 WHERE segID =' + str(segID) +';')
+            dataArray = dataProc(data) # 2D data array
+                
+            # plot surface
+            with st.container():
+                fig = px.imshow(dataArray)
+                st.plotly_chart(fig)
     
     with col2:
         with st.container():
