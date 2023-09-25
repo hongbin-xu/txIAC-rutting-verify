@@ -32,6 +32,15 @@ def check_password():
         # Password correct.
         return True
 
+@st.cache_data
+def dataLoad(conn, segID):
+    """
+    creating 2d array of the depth measurement
+    """
+    data = conn.query('SELECT * from pathway_rawFM365_SEP13 WHERE segID =' + str(segID) +';')
+    return data
+
+@st.cache_data
 def dataProc(data):
     """
     creating 2d array of the depth measurement
@@ -65,7 +74,7 @@ if check_password():
                 scanID = st.number_input("Scan ID", min_value=0, max_value=899, step = 1)
             
             # Load data
-            data = conn.query('SELECT * from pathway_rawFM365_SEP13 WHERE segID =' + str(segID) +';')
+            data = dataLoad(conn, segID)
             tranStep = data["tranStep"].mean()
             lonStep = data["lonStep"].mean()
             dataArray = dataProc(data) # 2D data array
