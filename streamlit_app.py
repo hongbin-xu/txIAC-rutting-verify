@@ -58,7 +58,7 @@ def surfPlot(dataArray, tranStep, lonStep):
                     y = np.arange(900)*lonStep,
                    aspect="auto", 
                    height = 1200)
-    fig.update_traces(hovertemplate="<br>".join(["Transverse (mm): %{x.3f}({x/tranStep})", "Longitudinal (mm): %{y.3f}", "Height: %{color}"]))
+    fig.update_traces(hovertemplate="<br>".join(["Transverse (mm): %{x} (%{x/tranStep})", "Longitudinal (mm): %{y}", "Height: %{color}"]))
     fig.update_layout(showlegend=False)
     st.plotly_chart(fig, use_container_width=True, theme = None)
 
