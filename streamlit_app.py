@@ -76,12 +76,12 @@ if check_password():
     with col2:
         with st.container():
             st.subheader("Transverse Profile")
-            
-            scanData = data.loc[data["scanID"]==scanID, ["tranStep", "depth"]].reset_index(drop=True)
 
+            # Extract transverse profile
+            scanData = data.loc[data["scanID"]==scanID, ["tranStep", "depth"]].reset_index(drop=True)
             scanData_v1 = pd.DataFrame({"DIST":scanData["tranStep"][0]*np.arange(1536), "depth":np.array(scanData["depth"][0].split(b",")).astype("float")})
                       
-            st.bar_chart(scanData)
+            st.line_chart(data = scanData_v1, x = "DIST", y ="DEPTH")
             if st.checkbox('Show raw transverse profile data'):
                 st.write(scanData_v1)
     
