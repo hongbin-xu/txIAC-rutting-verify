@@ -70,7 +70,7 @@ if check_password():
             
         # plot surface
         with st.container():
-            fig = px.imshow(dataArray, width=150, height=data["lonStep"].mean()*90/data["tranStep"].mean())
+            fig = px.imshow(dataArray, width=300, height=100)
             st.plotly_chart(fig)
     
     with col2:
