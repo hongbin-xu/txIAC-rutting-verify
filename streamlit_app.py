@@ -83,9 +83,10 @@ if check_password():
             scanData_v1 = pd.DataFrame({"DIST":scanData["tranStep"][0]*np.arange(1536), "DEPTH":np.array(scanData["depth"][0].split(b",")).astype("float")})
 
             # Plot transverse profile
-            fig = px.line(scanData_v1, x="DIST", y="DEPTH", labels = {"DIST": "DISTANCE (mm)", "DEPTH": "DEPTH (mm}"}, mirror=True,
-                          ticks='outside', showline=True)
+            fig = px.line(scanData_v1, x="DIST", y="DEPTH", labels = {"DIST": "DISTANCE (mm)", "DEPTH": "DEPTH (mm}"})
             st.plotly_chart(fig)
+
+            st.download_button(label="Download profile", data=scanData_v1)
             if st.checkbox('Show raw transverse profile data'):
                 st.write(scanData_v1)
     
