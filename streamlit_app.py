@@ -68,7 +68,7 @@ if check_password():
             dataArray = dataProc(data) # 2D data array
             
             # plot surface
-            with st.container():
+            #with st.container():
                 # surface plot
                 #filtered_data = data1[data1[DATE_COLUMN].dt.hour == hour_to_filter]
                 #st.map(filtered_data)
