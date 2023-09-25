@@ -47,12 +47,12 @@ def dataLoad(_conn, segID):
 def scanDataExtra(segData, scanID):
     # Extract transverse profile
     scanData = segData.loc[segData["scanID"]==scanID, ["tranStep", "depth"]].reset_index(drop=True)
-    scanData_v1 = pd.DataFrame({"DIST":scanData["tranStep"][0]*np.arange(1536), "DEPTH":np.array(scanData["depth"][0].split(b",")).astype("float")})
+    scanData_v1 = pd.DataFrame({"DIST":scanData["tranStep"][0]*np.arange(1536), "HEIGHT":np.array(scanData["depth"][0].split(b",")).astype("float")})
     return scanData_v1
 
 @st.cache_data
 def surfPlot(dataArray, tranStep, lonStep):
-    fig = px.imshow(dataArray, origin = "lower", labels = {"x": "Transverse (mm)", "y": "Longitudinal (mm)", "color": "DEPTH (mm)"},
+    fig = px.imshow(dataArray, origin = "lower", labels = {"x": "Transverse (mm)", "y": "Longitudinal (mm)", "color": "HEIGHT (mm)"},
                     x =np.arange(1536)*tranStep,
                     y = np.arange(900)*lonStep,
                    template = "plotly_dark")
@@ -106,7 +106,7 @@ if check_password():
             scanData_v1 = scanDataExtra(segData = data, scanID=scanID)
             
             # Plot transverse profile
-            fig = px.line(scanData_v1, x="DIST", y="DEPTH", labels = {"DIST": "DISTANCE (mm)", "DEPTH": "DEPTH (mm}"}, template = "plotly_dark")
+            fig = px.line(scanData_v1, x="DIST", y="DEPTH", labels = {"DIST": "DISTANCE (mm)", "HEIGHT": "HEIGHT (mm}"}, template = "plotly_dark")
             st.plotly_chart(fig)
 
             # View and download data
