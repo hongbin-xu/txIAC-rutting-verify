@@ -58,7 +58,7 @@ def surfPlot(dataArray, tranStep, lonStep):
                     y = np.arange(900)*lonStep,
                    template = "plotly_dark")
     fig.update_layout(showlegend=False)
-    st.plotly_chart(fig, use_container_width=True)
+    st.plotly_chart(fig, use_container_width=True, theme = None)
 
 # Check authentication
 if check_password():    
