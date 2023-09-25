@@ -75,7 +75,7 @@ if check_password():
                 fig = px.imshow(dataArray, origin = "lower", labels = {"x": "Transverse (mm)", "y": "Longitudinal (mm)", "color": "DEPTH (mm)"},
                                 x =np.arange(1536)*tranStep,
                                 y = np.arange(900)*lonStep)
-                fig.update_layout(legend={"x" : 1.02})
+                fig.update_layout(legend = {"xanchor": "right", "x": 1.08})
                 st.plotly_chart(fig)
     
     with col2:
