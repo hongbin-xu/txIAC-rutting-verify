@@ -35,7 +35,7 @@ def dataProc(data):
     """
     creating 2d array of the depth measurement
     """
-    dataArray = np.array([np.array(data["depth"][i].split(',')).astype("float") for i in range(data.shape[0])])
+    dataArray = np.array([np.array(data["depth"][i].split(b',')).astype("float") for i in range(data.shape[0])])
     return dataArray
 
 # Check authentication
@@ -79,7 +79,7 @@ if check_password():
             
             scanData = data.loc[data["scanID"]==scanID, ["tranStep", "depth"]]
 
-            scanData_v1 = pd.DataFrame({"DIST":scanData["tranStep"][0]*np.arange(1536), "depth":np.array(scanData["depth"][0].split(",")).astype("float")})
+            scanData_v1 = pd.DataFrame({"DIST":scanData["tranStep"][0]*np.arange(1536), "depth":np.array(scanData["depth"][0].split(b",")).astype("float")})
                       
             st.bar_chart(scanData)
             if st.checkbox('Show raw transverse profile data'):
