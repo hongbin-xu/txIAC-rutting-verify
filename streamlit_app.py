@@ -77,7 +77,7 @@ if check_password():
         with st.container():
             st.subheader("Transverse Profile")
             
-            scanData = data.loc[data["scanID"]==scanID, ["tranStep", "depth"]]
+            scanData = data.loc[data["scanID"]==scanID, ["tranStep", "depth"]].reset_index(drop=True)
 
             scanData_v1 = pd.DataFrame({"DIST":scanData["tranStep"][0]*np.arange(1536), "depth":np.array(scanData["depth"][0].split(b",")).astype("float")})
                       
