@@ -110,7 +110,7 @@ if check_password():
             st.plotly_chart(fig)
 
             # View and download data
-            st.download_button(label="Download profile", data=scanData_v1.to_csv().encode('utf-8'), file_name="transProfile.csv", mime = "csv")
+            st.download_button(label="Download profile", data=scanData_v1.to_csv().encode('utf-8'), file_name="transProfile_seg_" +str(segID)+"_scan_"+str(scanID)+".csv", mime = "csv")
             if st.checkbox('Show raw transverse profile data'):
                 st.write(scanData_v1)
         
