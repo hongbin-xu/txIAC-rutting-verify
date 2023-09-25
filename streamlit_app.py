@@ -2,8 +2,7 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 
-#from streamlit_elements import elements, mui, html
-#import streamlit_authenticator as stauth
+# Authentication function
 def check_password():
     """Returns `True` if the user had the correct password."""
 
@@ -32,7 +31,16 @@ def check_password():
         # Password correct.
         return True
 
-if check_password():
+def dataLoad(conn, segID):
+    """
+    cn: MySQL connection
+    segID: segment ID
+    """
+    data = conn.query('SELECT * from pathway_rawFM365_SEP13 WHERE segID =' + str(segID) +';')
+    return data
+
+# Check authentication
+if check_password():    
     # Page title
     st.set_page_config(page_title='IAC-Rutting Verification')
 
@@ -44,7 +52,7 @@ if check_password():
         st.text("Presented by Hongbin Xu and Jorge Prozzi")
         st.text("The University of Texas at Austin")
     
-    # Mysql connection
+    # MySQL connection
     conn = st.experimental_connection('mysql', type='sql')
     col1, col2 = st.columns([3,4])
     with col1:
@@ -55,21 +63,23 @@ if check_password():
                 segID = st.number_input("Segment ID", min_value=1, max_value=100, step= 1)
             with col12:
                 scanID = st.number_input("Scan ID", min_value=0, max_value=899, step = 1)
-            #data = pd.
-    
+            
+            # Load data
+            data = conn.query('SELECT * from pathway_rawFM365_SEP13 WHERE segID =' + str(segID) +';')
+
+            # plot surface
             with st.container():
-                # Some number in the range 0-23
-                hour_to_filter = st.slider('hour', 0, 23, 17)
-                filtered_data = data1[data1[DATE_COLUMN].dt.hour == hour_to_filter]
-                st.map(filtered_data)
+                # surface plot
+                #filtered_data = data1[data1[DATE_COLUMN].dt.hour == hour_to_filter]
+                #st.map(filtered_data)
     
     with col2:
         with st.container():
             st.subheader("Transverse Profile")   
-            hist_values = np.histogram(data1[DATE_COLUMN].dt.hour, bins=24, range=(0,24))[0]
-            st.bar_chart(hist_values)
+            scanData = data.loc[data["scanID"]==scanID, "depth"]
+            st.bar_chart(scanData)
             if st.checkbox('Show raw transverse profile data'):
-                st.write(data1)
+                st.write(scanData)
     
     
     
