@@ -56,7 +56,7 @@ def surfPlot(dataArray, tranStep, lonStep):
                     x =np.arange(1536)*tranStep,
                     y = np.arange(900)*lonStep,
                     width = 1000)
-    fig.update_layout(legend = {"orientation":"h", "xanchor": "left", "x":1.01, "yanchor": "top", "y":1})
+    fig.update_layout(showlegend=False)
     st.plotly_chart(fig)
 
 # Check authentication
