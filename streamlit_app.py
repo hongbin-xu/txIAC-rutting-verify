@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
+import plotly.express as px
 
 # Authentication function
 def check_password():
@@ -79,9 +80,11 @@ if check_password():
 
             # Extract transverse profile
             scanData = data.loc[data["scanID"]==scanID, ["tranStep", "depth"]].reset_index(drop=True)
-            scanData_v1 = pd.DataFrame({"DIST":scanData["tranStep"][0]*np.arange(1536), "depth":np.array(scanData["depth"][0].split(b",")).astype("float")})
-                      
-            st.line_chart(data = scanData_v1, x = "DIST", y ="depth")
+            scanData_v1 = pd.DataFrame({"DIST":scanData["tranStep"][0]*np.arange(1536), "DEPTH":np.array(scanData["depth"][0].split(b",")).astype("float")})
+
+            # Plot transverse profile
+            fig = px.line(scanData_v1, x="DIST", y="DEPTH", labels = {"DIST": "DISTANCE (mm)", "DEPTH": "DEPTH (mm}"})
+            st.plotly_chart(fig)
             if st.checkbox('Show raw transverse profile data'):
                 st.write(scanData_v1)
     
