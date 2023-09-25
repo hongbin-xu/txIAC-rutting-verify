@@ -72,9 +72,9 @@ if check_password():
                 
             # plot surface
             with st.container():
-                fig = px.imshow(dataArray, origin = "lower", labels = {"x": "Longitudinal Direction", "y": "Transverse Direction", "color": "DEPTH"},
+                fig = px.imshow(dataArray, origin = "lower", labels = {"x": "Longitudinal (mm)", "y": "Transverse (mm)", "color": "DEPTH (mm)"},
                                x =np.arange(1536)*tranStep, 
-                               y = data["scanDFO"].values)
+                               y = np.arange(900)*lonStep)
                 st.plotly_chart(fig)
     
     with col2:
