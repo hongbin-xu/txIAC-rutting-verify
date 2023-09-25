@@ -56,7 +56,7 @@ def surfPlot(dataArray, tranStep, lonStep):
     fig = px.imshow(dataArray, origin = "lower", labels = {"x": "Transverse (mm)", "y": "Longitudinal (mm)", "color": "Height (mm)"},
                     x =np.arange(1536)*tranStep,
                     y = np.arange(900)*lonStep,
-                    hovertemplate = "Longitudinal: %{y} <br> Transverse: %{x} <br>Height: %{color} </br> "
+                    hovertemplate = "Longitudinal: %{y} <br> Transverse: %{x} <br>Height: %{color} </br> ",
                    aspect="auto", 
                    height = 1200)
     fig.update_layout(showlegend=False)
