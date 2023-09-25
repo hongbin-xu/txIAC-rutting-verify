@@ -56,7 +56,7 @@ def surfPlot(dataArray, tranStep, lonStep):
     fig = px.imshow(dataArray, origin = "lower", labels = {"x": "Transverse (mm)", "y": "Longitudinal (mm)", "color": "HEIGHT (mm)"},
                     x =np.arange(1536)*tranStep,
                     y = np.arange(900)*lonStep,
-                   template = "plotly_dark")
+                   aspect="auto")
     fig.update_layout(showlegend=False)
     st.plotly_chart(fig, use_container_width=True, theme = None)
 
