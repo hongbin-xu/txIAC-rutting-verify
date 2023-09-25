@@ -66,11 +66,15 @@ if check_password():
             
             # Load data
             data = conn.query('SELECT * from pathway_rawFM365_SEP13 WHERE segID =' + str(segID) +';')
+            tranStep = data["tranStep"].mean()
+            lonStep = data["lonStep"].mean()
             dataArray = dataProc(data) # 2D data array
                 
             # plot surface
             with st.container():
-                fig = px.imshow(dataArray, origin = "lower", labels = {"x": "Longitudinal Direction", "y": "Transverse Direction"} )
+                fig = px.imshow(dataArray, origin = "lower", labels = {"x": "Longitudinal Direction", "y": "Transverse Direction", "color": "DEPTH"},
+                               x = np.arange(1536)*tranStep, 
+                               y = np.arange(900)*lonStep)
                 st.plotly_chart(fig)
     
     with col2:
