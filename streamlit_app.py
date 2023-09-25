@@ -86,9 +86,13 @@ if check_password():
             fig = px.line(scanData_v1, x="DIST", y="DEPTH", labels = {"DIST": "DISTANCE (mm)", "DEPTH": "DEPTH (mm}"})
             st.plotly_chart(fig)
 
-            st.download_button(label="Download profile", data=scanData_v1.to_csv().encode('utf-8'), file_name="transProfile.csv", mime = "csv")
-            if st.checkbox('Show raw transverse profile data'):
-                st.write(scanData_v1)
+            # View and download data
+            col21, col22=st.columns(2)
+            with col21:
+                if st.checkbox('Show raw transverse profile data'):
+                    st.write(scanData_v1)
+            with col22:
+                st.download_button(label="Download profile", data=scanData_v1.to_csv().encode('utf-8'), file_name="transProfile.csv", mime = "csv")
     
     
     
