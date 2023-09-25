@@ -31,13 +31,12 @@ def check_password():
         # Password correct.
         return True
 
-def dataLoad(conn, segID):
+def dataProc(data):
     """
-    cn: MySQL connection
-    segID: segment ID
+    creating 2d array of the depth measurement
     """
-    data = conn.query('SELECT * from pathway_rawFM365_SEP13 WHERE segID =' + str(segID) +';')
-    return data
+    dataArray = np.array([np.array(data["depth"][i].split(',')).astype("float") for i in range(data.shape[0])])
+    return dataArray
 
 # Check authentication
 if check_password():    
@@ -66,20 +65,25 @@ if check_password():
             
             # Load data
             data = conn.query('SELECT * from pathway_rawFM365_SEP13 WHERE segID =' + str(segID) +';')
-
+            dataArray = dataProc(data) # 2D data array
+            
             # plot surface
-            #with st.container():
+            with st.container():
                 # surface plot
                 #filtered_data = data1[data1[DATE_COLUMN].dt.hour == hour_to_filter]
                 #st.map(filtered_data)
     
     with col2:
         with st.container():
-            st.subheader("Transverse Profile")   
-            scanData = data.loc[data["scanID"]==scanID, "depth"]
+            st.subheader("Transverse Profile")
+            
+            scanData = data.loc[data["scanID"]==scanID, ["tranStep", "depth"]]
+
+            scanData_v1 = pd.DataFrame({"DIST":scanData["tranStep"][0]*np.arange(1536), "depth":np.array(scanData["depth"][0].split(",")).astype("float")})
+                      
             st.bar_chart(scanData)
             if st.checkbox('Show raw transverse profile data'):
-                st.write(scanData)
+                st.write(scanData_v1)
     
     
     
