@@ -54,7 +54,7 @@ if check_password():
     
     # MySQL connection
     conn = st.experimental_connection('mysql', type='sql')
-    col1, col2 = st.columns([3,4], gap = "medium")
+    col1, col2 = st.columns([5,3], gap = "medium")
     with col1:
         with st.container():
             st.subheader("Suface")
