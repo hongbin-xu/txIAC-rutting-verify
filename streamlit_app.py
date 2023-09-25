@@ -41,6 +41,7 @@ def dataLoad(_conn, segID):
     tranStep = data["tranStep"].mean()
     lonStep = data["lonStep"].mean()
     dataArray = np.array([np.array(data["depth"][i].split(b',')).astype("float") for i in range(data.shape[0])])
+    
     return data, tranStep, lonStep, dataArray
 
 @st.cache_data
@@ -106,7 +107,7 @@ if check_password():
             scanData_v1 = scanDataExtra(segData = data, scanID=scanID)
             
             # Plot transverse profile
-            fig = px.line(scanData_v1, x="DIST", y="DEPTH", labels = {"DIST": "DISTANCE (mm)", "HEIGHT": "HEIGHT (mm}"}, template = "plotly_dark")
+            fig = px.line(scanData_v1, x="DIST", y="HEIGHT", labels = {"DIST": "DISTANCE (mm)", "HEIGHT": "HEIGHT (mm}"}, template = "plotly_dark")
             st.plotly_chart(fig)
 
             # View and download data
