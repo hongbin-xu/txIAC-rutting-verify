@@ -54,7 +54,8 @@ def scanDataExtra(segData, scanID):
 def surfPlot(dataArray, tranStep, lonStep):
     fig = px.imshow(dataArray, origin = "lower", labels = {"x": "Transverse (mm)", "y": "Longitudinal (mm)", "color": "DEPTH (mm)"},
                     x =np.arange(1536)*tranStep,
-                    y = np.arange(900)*lonStep)
+                    y = np.arange(900)*lonStep,
+                   template = "plotly_dark")
     fig.update_layout(showlegend=False)
     st.plotly_chart(fig)
 
