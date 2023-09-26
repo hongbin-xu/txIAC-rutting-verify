@@ -98,8 +98,8 @@ if check_password():
                 # Load data
                 data, tranStep, lonStep, dataArray = dataLoad(_conn=conn, segID=segID, mode = "1")
             else: 
-                st.wrote('Data for multiple segments (selection of excessive data may leads to slow processing)')
-                st.wrote('id range: 1~90000')
+                st.write('Data for multiple segments (selection of excessive data may leads to slow processing)')
+                st.write('id range: 1~90000')
                 with col11:
                     idmin = st.number_input("id start", min_value=1, max_value=90000, value = (1, 900), step= 1)
                     idmax = st.number_input("id end", min_value=1, max_value=90000, value = 900, step= 1)
