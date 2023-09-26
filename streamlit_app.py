@@ -57,17 +57,25 @@ def scanDataExtra(segData, segID, scanID):
     return scanData_v1
 
 @st.cache_data
-def surfPlot(dataArray, tranStep, lonStep):
-    customData=np.arange(dataArray.shape[0]).reshape(dataArray.shape[0],-1).repeat(1536, axis =1)
+def surfPlot(data, dataArray, tranStep, lonStep):
+    # hover information
+    # id, segID, scanID, dataNum, DFO + mm, transverse mm
+    customData=zip(data["segID"].values.reshape(dataArray.shape[0],-1).repeat(1536, axis =1), # SegID
+                   #np.arange(dataArray.shape[0]).reshape(dataArray.shape[0],-1).repeat(1536, axis =1), #ScanID
+                   data["segID"].values.reshape(dataArray.shape[0],-1).repeat(1536, axis =1), # SegID
+                   np.ones(dataArray.shape)*data["DFO"]
+                   )
+    
     fig = px.imshow(dataArray, origin = "lower", labels = {"x": "Transverse (mm)", "y": "Longitudinal (mm)", "color": "Height (mm)"},
-                    x =np.arange(1536)*tranStep,
-                    y = np.arange(dataArray.shape[0])*lonStep,
-                   aspect="auto", 
-                   height = 800)
-    #fig.update_layout(hovermode= "y unified")
-    #fig.update_traces(hovertemplate="<br>".join(["Line: %{customdata}.format(y/lonStep)","Transverse: %{x:.0f} mm", "Longitudinal: %{y:.0f} mm", "Height: %{z} mm"]))
+                    x = np.arange(1536)*tranStep,
+                    y = data["id"], #np.arange(dataArray.shape[0])*lonStep,
+                    aspect="auto", 
+                    height = 800)
     fig.update(data=[{'customdata': customData,
-                      'hovertemplate': "<br>".join(["Line: %{customdata:.0f}","Transverse: %{x:.0f} mm", "Longitudinal: %{y:.0f} mm", "Height: %{z} mm"])}])
+                      'hovertemplate': "<br>".join(["Line: %{customdata:.0f}",
+                                                    "Transverse: %{x:.0f} mm",
+                                                    "Longitudinal: %{y:.0f} mm",
+                                                    "Height: %{z} mm"])}])
     st.plotly_chart(fig, use_container_width=True, theme = None)
 
 # Check authentication
@@ -113,7 +121,7 @@ if check_password():
             st.write("Route: "+ str(data["ROUTE_NAME"][0])+ ", DFO: "+str(data["DFO"].min())+ "~"+ str(data["DFO"].max()))
             # plot surface
             with st.container():
-                surfPlot(dataArray=dataArray, tranStep=tranStep, lonStep=lonStep)
+                surfPlot(data=data, dataArray=dataArray, tranStep=tranStep, lonStep=lonStep)
 
     with col2:
         with st.container():
