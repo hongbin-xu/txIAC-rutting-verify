@@ -90,7 +90,7 @@ if check_password():
         with st.container():
             st.subheader("Suface")
             col11, col12 = st.columns(2)
-            if st.checkbox('Data for individual segment', ):
+            if st.checkbox('Data for individual segment', value = True):
                 with col11:
                     segID = st.number_input("Segment ID", min_value=1, max_value=100, step= 1)
                 with col12:
@@ -98,20 +98,21 @@ if check_password():
                 # Load data
                 data, tranStep, lonStep, dataArray = dataLoad(_conn=conn, segID=segID, mode = "1")
             else: 
-                st.wrote('Data for multiple segments (selection of excessive data may leads to slow processing)'):
+                st.wrote('Data for multiple segments (selection of excessive data may leads to slow processing)')
+                st.wrote('id range: 1~90000')
                 with col11:
-                    segID = st.number_input("Segment ID", min_value=1, max_value=100, step= 1)
+                    idmin = st.number_input("id start", min_value=1, max_value=90000, value = (1, 900), step= 1)
+                    idmax = st.number_input("id end", min_value=1, max_value=90000, value = 900, step= 1)
                 with col12:
                     scanID = st.number_input("Line", min_value=0, max_value=899, step = 1)
                 # Load data
-                data, tranStep, lonStep, dataArray = dataLoad(_conn=conn, idmin= , idmax=, mode ="2")
+                data, tranStep, lonStep, dataArray = dataLoad(_conn=conn, idmin= idmin+1, idmax=idmax+1, mode ="2")
                 
             st.write("Route: "+ str(data["ROUTE_NAME"][0])+ ", DFO: "+str(data["DFO"].min())+ "~"+ str(data["DFO"].max()))
             # plot surface
             with st.container():
                 surfPlot(dataArray=dataArray, tranStep=tranStep, lonStep=lonStep)
 
-    
     with col2:
         with st.container():
             st.subheader("Transverse Profile")
