@@ -89,8 +89,8 @@ if check_password():
     with col1:
         with st.container():
             st.subheader("Suface")
-            col11, col12 = st.columns(2)
             if st.checkbox('Data for individual segment', value = True):
+                col11, col12 = st.columns(2)
                 with col11:
                     segID = st.number_input("Segment ID", min_value=1, max_value=100, step= 1)
                 with col12:
@@ -98,6 +98,7 @@ if check_password():
                 # Load data
                 data, tranStep, lonStep, dataArray = dataLoad(_conn=conn, segID=segID, mode = "1")
             else: 
+                col11, col12 = st.columns(2)
                 st.write('Data for multiple segments (selection of excessive data may leads to slow processing)')
                 st.write('id range: 1~90000')
                 with col11:
@@ -106,9 +107,7 @@ if check_password():
                     # Load data
                     data, tranStep, lonStep, dataArray = dataLoad(_conn=conn, idmin= idmin+1, idmax=idmax+1, mode ="2")
                 with col12:
-                    st.write(data.head())
                     idSelect = st.number_input("Line", min_value=idmin, max_value=idmax, step = 1)
-                    st.write(data.loc[data["id"]==(idSelect+1), ["segID"]].reset_index(drop = True))
                     segID = data.loc[data["id"]==(idSelect+1), ["segID"]].reset_index(drop = True)["segID"][0]
                     scanID = data.loc[data["id"]==(idSelect+1), ["scanID"]].reset_index(drop = True)["scanID"][0]
             st.write("Route: "+ str(data["ROUTE_NAME"][0])+ ", DFO: "+str(data["DFO"].min())+ "~"+ str(data["DFO"].max()))
