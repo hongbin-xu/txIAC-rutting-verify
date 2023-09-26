@@ -106,8 +106,8 @@ if check_password():
                     # Load data
                     data, tranStep, lonStep, dataArray = dataLoad(_conn=conn, idmin= idmin+1, idmax=idmax+1, mode ="2")
                 with col12:
-                    st.write(data.loc[data["id"]==idSelect, ["segID"]].reset_index(drop = True))
                     idSelect = st.number_input("Line", min_value=idmin, max_value=idmax, step = 1)
+                    st.write(data.loc[data["id"]==idSelect, ["segID"]].reset_index(drop = True))
                     segID = data.loc[data["id"]==idSelect, ["segID"]].reset_index(drop = True)[0]
                     scanID = data.loc[data["id"]==idSelect, ["scanID"]].reset_index(drop = True)[0]
             st.write("Route: "+ str(data["ROUTE_NAME"][0])+ ", DFO: "+str(data["DFO"].min())+ "~"+ str(data["DFO"].max()))
