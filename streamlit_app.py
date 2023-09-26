@@ -109,8 +109,8 @@ if check_password():
                     st.write(data.head())
                     idSelect = st.number_input("Line", min_value=idmin, max_value=idmax, step = 1)
                     st.write(data.loc[data["id"]==(idSelect+1), ["segID"]].reset_index(drop = True))
-                    segID = data.loc[data["id"]==(idSelect+1), ["segID"]].reset_index(drop = True)[0]
-                    scanID = data.loc[data["id"]==(idSelect+1), ["scanID"]].reset_index(drop = True)[0]
+                    segID = data.loc[data["id"]==(idSelect+1), ["segID"]].reset_index(drop = True)["segID"][0]
+                    scanID = data.loc[data["id"]==(idSelect+1), ["scanID"]].reset_index(drop = True)["scanID"][0]
             st.write("Route: "+ str(data["ROUTE_NAME"][0])+ ", DFO: "+str(data["DFO"].min())+ "~"+ str(data["DFO"].max()))
             # plot surface
             with st.container():
