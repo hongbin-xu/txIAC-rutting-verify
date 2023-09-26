@@ -101,7 +101,7 @@ if check_password():
                 st.write('Data for multiple segments (selection of excessive data may leads to slow processing)')
                 st.write('id range: 1~90000')
                 with col11:
-                    idmin = st.number_input("id start", min_value=1, max_value=90000, value = (1, 900), step= 1)
+                    idmin = st.number_input("id start", min_value=1, max_value=90000, value = 1, step= 1)
                     idmax = st.number_input("id end", min_value=1, max_value=90000, value = 900, step= 1)
                 with col12:
                     scanID = st.number_input("Line", min_value=0, max_value=899, step = 1)
