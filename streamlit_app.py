@@ -59,9 +59,10 @@ def surfPlot(dataArray, tranStep, lonStep):
                     y = np.arange(900)*lonStep,
                    aspect="auto", 
                    height = 800)
-    fig.data[0].customdata = customData
     #fig.update_layout(hovermode= "y unified")
-    fig.update_traces(hovertemplate="<br>".join(["Line: %{customdata}.format(y/lonStep)","Transverse: %{x:.0f} mm", "Longitudinal: %{y:.0f} mm", "Height: %{z} mm"]))
+    #fig.update_traces(hovertemplate="<br>".join(["Line: %{customdata}.format(y/lonStep)","Transverse: %{x:.0f} mm", "Longitudinal: %{y:.0f} mm", "Height: %{z} mm"]))
+    fig.update(data=[{'customdata': customData,
+                      'hovertemplate': "<br>".join(["Line: %{customdata}.format(y/lonStep)","Transverse: %{x:.0f} mm", "Longitudinal: %{y:.0f} mm", "Height: %{z} mm"])}])
     st.plotly_chart(fig, use_container_width=True, theme = None)
 
 # Check authentication
