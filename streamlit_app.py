@@ -33,11 +33,16 @@ def check_password():
         return True
 
 @st.cache_data
-def dataLoad(_conn, segID):
+def dataLoad(_conn, segID=None, idmin = None, idmax=None, mode = "1"):
     """
+    mode1: select for each segment
+    mode2: select for multiple segment
     creating 2d array of the depth measurement
     """
-    data = conn.query('SELECT * from pathway_rawFM365_SEP13 WHERE segID =' + str(segID) +';')
+    if mode =="1":
+        data = conn.query('SELECT * from pathway_rawFM365_SEP13 WHERE segID =' + str(segID) +';')
+    if mode =="2":
+        data = conn.query('SELECT * from pathway_rawFM365_SEP13 WHERE id BETWEEN '+ str(idmin) +' AND ' + str(idmax)+';')
     tranStep = data["tranStep"].mean()
     lonStep = data["lonStep"].mean()
     dataArray = np.array([np.array(data["depth"][i].split(b',')).astype("float") for i in range(data.shape[0])])
@@ -85,13 +90,22 @@ if check_password():
         with st.container():
             st.subheader("Suface")
             col11, col12 = st.columns(2)
-            with col11:
-                segID = st.number_input("Segment ID", min_value=1, max_value=100, step= 1)
-            with col12:
-                scanID = st.number_input("Line", min_value=0, max_value=899, step = 1)
-            
-            # Load data
-            data, tranStep, lonStep, dataArray = dataLoad(_conn=conn, segID=segID)
+            if st.checkbox('Data for individual segment', ):
+                with col11:
+                    segID = st.number_input("Segment ID", min_value=1, max_value=100, step= 1)
+                with col12:
+                    scanID = st.number_input("Line", min_value=0, max_value=899, step = 1)
+                # Load data
+                data, tranStep, lonStep, dataArray = dataLoad(_conn=conn, segID=segID, mode = "1")
+            else: 
+                st.wrote('Data for multiple segments (selection of excessive data may leads to slow processing)'):
+                with col11:
+                    segID = st.number_input("Segment ID", min_value=1, max_value=100, step= 1)
+                with col12:
+                    scanID = st.number_input("Line", min_value=0, max_value=899, step = 1)
+                # Load data
+                data, tranStep, lonStep, dataArray = dataLoad(_conn=conn, idmin= , idmax=, mode ="2")
+                
             st.write("Route: "+ str(data["ROUTE_NAME"][0])+ ", DFO: "+str(data["DFO"].min())+ "~"+ str(data["DFO"].max()))
             # plot surface
             with st.container():
