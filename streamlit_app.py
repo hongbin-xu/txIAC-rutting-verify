@@ -108,7 +108,7 @@ if check_password():
                 with col12:
                     idSelect = st.number_input("Line", min_value=idmin, max_value=idmax, step = 1)
                     segID = data.loc[data["id"]==idSelect, "segID"][0]
-                    scanID = data.loc[data["id]==idSelect, "scanID"][0]
+                    scanID = data.loc[data["id"]==idSelect, "scanID"][0]
             st.write("Route: "+ str(data["ROUTE_NAME"][0])+ ", DFO: "+str(data["DFO"].min())+ "~"+ str(data["DFO"].max()))
             # plot surface
             with st.container():
