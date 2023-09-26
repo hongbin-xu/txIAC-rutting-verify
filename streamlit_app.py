@@ -53,7 +53,7 @@ def scanDataExtra(segData, scanID):
 
 @st.cache_data
 def surfPlot(dataArray, tranStep, lonStep):
-    costomData=np.arange(900).reshape(900,-1).repeat(1536, axis =1)
+    customData=np.arange(900).reshape(900,-1).repeat(1536, axis =1)
     fig = px.imshow(dataArray, origin = "lower", labels = {"x": "Transverse (mm)", "y": "Longitudinal (mm)", "color": "Height (mm)"},
                     x =np.arange(1536)*tranStep,
                     y = np.arange(900)*lonStep,
@@ -61,7 +61,7 @@ def surfPlot(dataArray, tranStep, lonStep):
                    height = 800)
     #fig.update_layout(hovermode= "y unified")
     #fig.update_traces(hovertemplate="<br>".join(["Line: %{customdata}.format(y/lonStep)","Transverse: %{x:.0f} mm", "Longitudinal: %{y:.0f} mm", "Height: %{z} mm"]))
-    fig.update(data=[{'custom_data': customData,
+    fig.update(data=[{'customdata': customData,
                       'hovertemplate': "<br>".join(["Line: %{customdata}.format(y/lonStep)","Transverse: %{x:.0f} mm", "Longitudinal: %{y:.0f} mm", "Height: %{z} mm"])}])
     st.plotly_chart(fig, use_container_width=True, theme = None)
 
