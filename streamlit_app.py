@@ -89,7 +89,7 @@ if check_password():
             
             # Load data
             data, tranStep, lonStep, dataArray = dataLoad(_conn=conn, segID=segID)
-            st.write("DFO: "+str(data["DFO"].mean()))
+            st.write("ROUTE_NAME: "+ str(data["ROUTE_NAME"][0])+ ", DFO: "+str(data["DFO"].min())+ "~"+ str(data["DFO"].max()))
             # plot surface
             with st.container():
                 surfPlot(dataArray=dataArray, tranStep=tranStep, lonStep=lonStep)
