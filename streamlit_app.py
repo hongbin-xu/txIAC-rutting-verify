@@ -55,9 +55,9 @@ def dataLoad(_conn, segID=None, idmin = None, idmax=None, mode = "1"):
     return data, tranStep, lonStep, dataArray
 
 @st.cache_data
-def scanDataExtra(segData, segID, scanID):
+def transExtrac(segData, id):
     # Extract transverse profile
-    scanData = segData.loc[(segData["segID"]==segID)&(segData["scanID"]==scanID), ["tranStep", "depth"]].reset_index(drop=True)
+    scanData = segData.loc[(segData["id"]==id), ["tranStep", "depth"]].reset_index(drop=True)
     scanData_v1 = pd.DataFrame({"DIST":scanData["tranStep"][0]*np.arange(1536), "Height":np.array(scanData["depth"][0].split(b",")).astype("float")})
     return scanData_v1
 
@@ -65,11 +65,11 @@ def scanDataExtra(segData, segID, scanID):
 def surfPlot(data, dataArray, tranStep, lonStep):
     # hover information
     # id, segID, scanID, dataNum, DFO + mm, transverse mm
-    customData= np.stack(data["segID"].values.reshape(dataArray.shape[0],-1).repeat(dataArray.shape[1], axis =1), # SegID
-                   data["DFO"].values.reshape(dataArray.shape[0],-1).repeat(dataArray.shape[1], axis =1), # DFO 
-                   data["DFO"].values.reshape(dataArray.shape[0],-1).repeat(dataArray.shape[1], axis =1), # DFO offset
-                   np.arange(dataArray.shape[1]).reshape(-1,dataArray.shape[1]).repeat(dataArray.shape[0], axis=0), # lontigitudinal profile id
-                   np.arange(dataArray.shape[1]).reshape(-1,dataArray.shape[1]).repeat(dataArray.shape[0], axis=0)*data["tranStep"].values.reshape(-1,1) # trans Distance
+    customData= np.stack(data["segID"].values.reshape(dataArray.shape[0],-1).repeat(dataArray.shape[1], axis =1), # SegID 0
+                   data["DFO"].values.reshape(dataArray.shape[0],-1).repeat(dataArray.shape[1], axis =1), # DFO 1
+                   data["DFO"].values.reshape(dataArray.shape[0],-1).repeat(dataArray.shape[1], axis =1), # DFO offset 2
+                   np.arange(dataArray.shape[1]).reshape(-1,dataArray.shape[1]).repeat(dataArray.shape[0], axis=0), # lontigitudinal profile id 3
+                   np.arange(dataArray.shape[1]).reshape(-1,dataArray.shape[1]).repeat(dataArray.shape[0], axis=0)*data["tranStep"].values.reshape(-1,1) # trans Distance 4
                    )
     
     fig = px.imshow(dataArray, origin = "lower", labels = {"x": "Transverse (mm)", "y": "Longitudinal (mm)", "color": "Height (mm)"},
@@ -80,11 +80,10 @@ def surfPlot(data, dataArray, tranStep, lonStep):
                       'hovertemplate': "<br>".join(["id: %{y:.0f}",
                                                     "segID: %{customdata[0]:.0f}",
                                                     "DFO: %{customdata[1]:.0f}",
-                                                    "OFFSET: %{customdata[0]:.0f}",
+                                                    "OFFSET: %{customdata[2]:.0f}",
                                                     "lonID: %{customdata[3]:.0f}",
-                                                    #"Line: %{customdata:.0f}",
-                                                    #"Transverse: %{x:.0f} mm",
-                                                    #"Longitudinal: %{y:.0f} mm",
+                                                    "transID: %{x:.0f}",
+                                                    "transDist: %{customdata[3]:.0f} mm",
                                                     "Height: %{z} mm"])}])
     st.plotly_chart(fig, use_container_width=True, theme = None)
 
@@ -112,7 +111,7 @@ if check_password():
                 with col11:
                     segID = st.number_input("Segment ID", min_value=1, max_value=100, step= 1)
                 with col12:
-                    scanID = st.number_input("Line", min_value=0, max_value=899, step = 1)
+                    id_ = st.number_input("id", min_value=(segID-1)*900+2, max_value=segID*900+1, step = 1)
                 # Load data
                 data, tranStep, lonStep, dataArray = dataLoad(_conn=conn, segID=segID, mode = "1")
             else: 
@@ -125,9 +124,8 @@ if check_password():
                     # Load data
                     data, tranStep, lonStep, dataArray = dataLoad(_conn=conn, idmin= idmin+1, idmax=idmax+1, mode ="2")
                 with col12:
-                    idSelect = st.number_input("Line", min_value=idmin, max_value=idmax, step = 1)
-                    segID = data.loc[data["id"]==(idSelect+1), ["segID"]].reset_index(drop = True)["segID"][0]
-                    scanID = data.loc[data["id"]==(idSelect+1), ["scanID"]].reset_index(drop = True)["scanID"][0]
+                    id_ = st.number_input("Line", min_value=idmin, max_value=idmax, step = 1)
+                    segID = id_//901+1
             st.write("Route: "+ str(data["ROUTE_NAME"][0])+ ", DFO: "+str(data["DFO"].min())+ "~"+ str(data["DFO"].max()))
             # plot surface
             with st.container():
@@ -138,9 +136,7 @@ if check_password():
             st.subheader("Transverse Profile")
 
             # Extract transverse profile
-            #scanData = data.loc[data["scanID"]==scanID, ["tranStep", "depth"]].reset_index(drop=True)
-            #scanData_v1 = pd.DataFrame({"DIST":scanData["tranStep"][0]*np.arange(1536), "DEPTH":np.array(scanData["depth"][0].split(b",")).astype("float")})
-            scanData_v1 = scanDataExtra(segData = data,segID = segID, scanID=scanID)
+            scanData_v1 = transExtrac(segData = data, id=id_)
             
             # Plot transverse profile
             fig = px.line(scanData_v1, x="DIST", y="Height", labels = {"DIST": "Transverse Distance (mm)", "Height": "Height (mm}"}, template = "plotly_dark")
