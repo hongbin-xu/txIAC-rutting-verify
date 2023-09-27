@@ -33,11 +33,6 @@ def check_password():
         return True
 
 @st.cache_data
-def mysql_connect(egine = 'mysql', type='sql'):
-    conn = st.experimental_connection(egine, type=type)
-    return conn
-
-@st.cache_data
 def dataLoad(_conn, segID=None, idmin = None, idmax=None, mode = "1"):
     """
     mode1: select for each segment
@@ -91,6 +86,7 @@ def surfPlot(data, dataArray, tranStep, lonStep):
 if check_password():    
     # Page title
     st.set_page_config(page_title='IAC-Rutting Verification')
+    conn = st.experimental_connection("mysql", type="sql")
 
     # sidebar
     with st.sidebar:
@@ -101,7 +97,6 @@ if check_password():
         st.text("The University of Texas at Austin")
     
     # MySQL connection
-    conn = mysql_connect()
     col1, col2 = st.columns(2, gap = "medium")
     with col1:
         with st.container():
