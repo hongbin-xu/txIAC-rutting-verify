@@ -78,9 +78,9 @@ def surfPlot(data, dataArray, tranStep, lonStep):
                                                     "DFO: %{customdata[1]:.0f}",
                                                     "OFFSET: %{customdata[0]:.0f}",
                                                     "lonID: %{customdata[3]:.0f}",
-                                                    Line: %{customdata:.0f}",
-                                                    "Transverse: %{x:.0f} mm",
-                                                    "Longitudinal: %{y:.0f} mm",
+                                                    #"Line: %{customdata:.0f}",
+                                                    #"Transverse: %{x:.0f} mm",
+                                                    #"Longitudinal: %{y:.0f} mm",
                                                     "Height: %{z} mm"])}])
     st.plotly_chart(fig, use_container_width=True, theme = None)
 
