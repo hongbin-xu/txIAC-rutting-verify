@@ -69,7 +69,7 @@ def surfPlot(data, dataArray, tranStep, lonStep):
     fig = px.imshow(dataArray, origin = "lower", 
                     labels = {"x": "Longitudinal profile id", "y": "Transverse profile id", "color": "Height (mm)"},
                     y = data["id"], #np.arange(dataArray.shape[0])*lonStep,
-                    customdata = customData,
+                    custom_data = customData,
                     aspect="auto", 
                     height = 800)
     fig.update(hovertemplate= "<br>".join(["id: %{y:.0f}",
