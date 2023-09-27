@@ -69,16 +69,16 @@ def surfPlot(data, dataArray, tranStep, lonStep):
     fig = px.imshow(dataArray, origin = "lower", 
                     labels = {"x": "Longitudinal profile id", "y": "Transverse profile id", "color": "Height (mm)"},
                     y = data["id"], #np.arange(dataArray.shape[0])*lonStep,
-                    custom_data = customData,
                     aspect="auto", 
                     height = 800)
-    fig.update(hovertemplate= "<br>".join(["id: %{y:.0f}",
-                                            "segID: %{customdata[0]:.0f}",
-                                            "DFO: %{customdata[1]:.0f}",
-                                            "OFFSET: %{customdata[2]:.0f}",
-                                            "lonID: %{x:.0f}",
-                                            "transDist: %{customdata[3]:.0f} mm",
-                                            "Height: %{z} mm"]))
+    fig.update(data={'customdata': customData,
+                      'hovertemplate': "<br>".join(["id: %{y:.0f}",
+                                                    "segID: %{customdata[0]:.0f}",
+                                                    "DFO: %{customdata[1]:.0f}",
+                                                    "OFFSET: %{customdata[2]:.0f}",
+                                                    "lonID: %{x:.0f}",
+                                                    "transDist: %{customdata[3]:.0f} mm",
+                                                    "Height: %{z} mm"])})
     st.plotly_chart(fig, use_container_width=True, theme = None)
 
 # Check authentication
