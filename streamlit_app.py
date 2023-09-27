@@ -65,9 +65,8 @@ def scanDataExtra(segData, segID, scanID):
 def surfPlot(data, dataArray, tranStep, lonStep):
     # hover information
     # id, segID, scanID, dataNum, DFO + mm, transverse mm
-    customData=zip(data["segID"].values.reshape(dataArray.shape[0],-1).repeat(dataArray.shape[1], axis =1), # SegID
+    customData= np.stack(data["segID"].values.reshape(dataArray.shape[0],-1).repeat(dataArray.shape[1], axis =1), # SegID
                    data["DFO"].values.reshape(dataArray.shape[0],-1).repeat(dataArray.shape[1], axis =1), # DFO 
-                   #np.arange(dataArray.shape[0]).reshape(dataArray.shape[0],-1).repeat(dataArray.shape[1], axis =1), #scanID
                    data["DFO"].values.reshape(dataArray.shape[0],-1).repeat(dataArray.shape[1], axis =1), # DFO offset
                    np.arange(dataArray.shape[1]).reshape(-1,dataArray.shape[1]).repeat(dataArray.shape[0], axis=0), # lontigitudinal profile id
                    np.arange(dataArray.shape[1]).reshape(-1,dataArray.shape[1]).repeat(dataArray.shape[0], axis=0)*data["tranStep"].values.reshape(-1,1) # trans Distance
