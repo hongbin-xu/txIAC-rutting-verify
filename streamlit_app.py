@@ -37,7 +37,7 @@ def dataLoad(_conn, segID=None, idmin = None, idmax=None, mode = "1"):
     """
     mode1: select for each segment
     mode2: select for multiple segment
-    creating 2d array of the depth measurement
+    creating 2d array of the height measurement
     """
     if mode =="1":
         data = conn.query('SELECT * from pathway_rawFM365_SEP13 WHERE segID =' + str(segID) +';')
@@ -45,26 +45,26 @@ def dataLoad(_conn, segID=None, idmin = None, idmax=None, mode = "1"):
         data = conn.query('SELECT * from pathway_rawFM365_SEP13 WHERE id BETWEEN '+ str(idmin) +' AND ' + str(idmax)+';')
     tranStep = data["tranStep"].mean()
     lonStep = data["lonStep"].mean()
-    dataArray = np.array([np.array(data["depth"][i].split(b',')).astype("float") for i in range(data.shape[0])])
+    dataArray = np.array([np.array(data["height"][i].split(b',')).astype("float") for i in range(data.shape[0])])
     
     return data, tranStep, lonStep, dataArray
 
 @st.cache_data
 def transExtrac(segData, id):
     # Extract transverse profile
-    scanData = segData.loc[(segData["id"]==id), ["tranStep", "depth"]].reset_index(drop=True)
-    scanData_v1 = pd.DataFrame({"DIST":scanData["tranStep"][0]*np.arange(1536), "Height":np.array(scanData["depth"][0].split(b",")).astype("float")})
+    scanData = segData.loc[(segData["id"]==id), ["tranStep", "height"]].reset_index(drop=True)
+    scanData_v1 = pd.DataFrame({"DIST":scanData["tranStep"][0]*np.arange(1536), "Height":np.array(scanData["height"][0].split(b",")).astype("float")})
     return scanData_v1
 
 @st.cache_data
 def surfPlot(data, dataArray, tranStep, lonStep):
     # hover information
     # id, segID, scanID, dataNum, DFO + mm, transverse mm
-    customData= np.stack(data["segID"].values.reshape(dataArray.shape[0],-1).repeat(dataArray.shape[1], axis =1), # SegID 0
-                   data["DFO"].values.reshape(dataArray.shape[0],-1).repeat(dataArray.shape[1], axis =1), # DFO 1
-                   data["DFO"].values.reshape(dataArray.shape[0],-1).repeat(dataArray.shape[1], axis =1), # DFO offset 2
-                   np.arange(dataArray.shape[1]).reshape(-1,dataArray.shape[1]).repeat(dataArray.shape[0], axis=0)*data["tranStep"].values.reshape(-1,1) # trans Distance 3
-                   )
+    customData= np.stack([data["segID"].values.reshape(dataArray.shape[0],-1).repeat(dataArray.shape[1], axis =1), # SegID 0
+                        data["DFO"].values.reshape(dataArray.shape[0],-1).repeat(dataArray.shape[1], axis =1), # DFO 1
+                        data["OFFSET"].values.reshape(dataArray.shape[0],-1).repeat(dataArray.shape[1], axis =1), # DFO offset 2
+                        np.arange(dataArray.shape[1]).reshape(-1,dataArray.shape[1]).repeat(dataArray.shape[0], axis=0)*data["tranStep"].values.reshape(-1,1) # trans Distance 3
+                        ])
     
     fig = px.imshow(dataArray, origin = "lower", 
                     labels = {"x": "Longitudinal profile id", "y": "Transverse profile id", "color": "Height (mm)"},
