@@ -74,7 +74,7 @@ def surfPlot(data, dataArray, tranStep, lonStep):
     fig.update(data=[{'customdata': customData,
                       'hovertemplate': "<br>".join(["id: %{y:.0f}",
                                                     "segID: %{customdata[0]:.0f}",
-                                                    "DFO: %{customdata[1]:.0f}",
+                                                    "DFO: %{customdata[1]:.3f} mile",
                                                     "OFFSET: %{customdata[2]:.0f} mm",
                                                     "lonID: %{x:.0f}",
                                                     "transDist: %{customdata[3]:.0f} mm",
