@@ -60,19 +60,25 @@ def scanDataExtra(segData, segID, scanID):
 def surfPlot(data, dataArray, tranStep, lonStep):
     # hover information
     # id, segID, scanID, dataNum, DFO + mm, transverse mm
-    customData=zip(data["segID"].values.reshape(dataArray.shape[0],-1).repeat(1536, axis =1), # SegID
-                   #np.arange(dataArray.shape[0]).reshape(dataArray.shape[0],-1).repeat(1536, axis =1), #ScanID
-                   data["segID"].values.reshape(dataArray.shape[0],-1).repeat(1536, axis =1), # SegID
-                   np.ones(dataArray.shape)*data["DFO"]
+    customData=zip(data["segID"].values.reshape(dataArray.shape[0],-1).repeat(dataArray.shape[1], axis =1), # SegID
+                   data["DFO"].values.reshape(dataArray.shape[0],-1).repeat(dataArray.shape[1], axis =1), # DFO 
+                   #np.arange(dataArray.shape[0]).reshape(dataArray.shape[0],-1).repeat(dataArray.shape[1], axis =1), #scanID
+                   data["DFO"].values.reshape(dataArray.shape[0],-1).repeat(dataArray.shape[1], axis =1), # DFO offset
+                   np.arange(dataArray.shape[1]).reshape(-1,dataArray.shape[1]).repeat(dataArray.shape[0], axis=0), # lontigitudinal profile id
+                   np.arange(dataArray.shape[1]).reshape(-1,dataArray.shape[1]).repeat(dataArray.shape[0], axis=0)*data["tranStep"].values.reshape(-1,1) # trans Distance
                    )
     
     fig = px.imshow(dataArray, origin = "lower", labels = {"x": "Transverse (mm)", "y": "Longitudinal (mm)", "color": "Height (mm)"},
-                    x = np.arange(1536)*tranStep,
                     y = data["id"], #np.arange(dataArray.shape[0])*lonStep,
                     aspect="auto", 
                     height = 800)
     fig.update(data=[{'customdata': customData,
-                      'hovertemplate': "<br>".join([#"Line: %{customdata:.0f}",
+                      'hovertemplate': "<br>".join(["id: %{y:.0f}",
+                                                    "segID: %{customdata[0]:.0f}",
+                                                    "DFO: %{customdata[1]:.0f}",
+                                                    "OFFSET: %{customdata[0]:.0f}",
+                                                    "lonID: %{customdata[3]:.0f}",
+                                                    Line: %{customdata:.0f}",
                                                     "Transverse: %{x:.0f} mm",
                                                     "Longitudinal: %{y:.0f} mm",
                                                     "Height: %{z} mm"])}])
