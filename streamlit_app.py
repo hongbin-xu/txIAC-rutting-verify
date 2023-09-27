@@ -40,9 +40,9 @@ def dataLoad(_conn, segID=None, idmin = None, idmax=None, mode = "1"):
     creating 2d array of the height measurement
     """
     if mode =="1":
-        data = conn.query('SELECT * from pathway_rawFM365_SEP13 WHERE segID =' + str(segID) +';')
+        data = conn.query('SELECT * from pathway_raw_fm365_sep13 WHERE segID =' + str(segID) +';')
     if mode =="2":
-        data = conn.query('SELECT * from pathway_rawFM365_SEP13 WHERE id BETWEEN '+ str(idmin) +' AND ' + str(idmax)+';')
+        data = conn.query('SELECT * from pathway_raw_fm365_sep13 WHERE id BETWEEN '+ str(idmin) +' AND ' + str(idmax)+';')
     tranStep = data["tranStep"].mean()
     lonStep = data["lonStep"].mean()
     dataArray = np.array([np.array(data["height"][i].split(b',')).astype("float") for i in range(data.shape[0])])
