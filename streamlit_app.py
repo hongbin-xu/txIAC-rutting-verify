@@ -63,11 +63,11 @@ def surfPlot(data, dataArray, tranStep, lonStep):
     customData= np.stack(data["segID"].values.reshape(dataArray.shape[0],-1).repeat(dataArray.shape[1], axis =1), # SegID 0
                    data["DFO"].values.reshape(dataArray.shape[0],-1).repeat(dataArray.shape[1], axis =1), # DFO 1
                    data["DFO"].values.reshape(dataArray.shape[0],-1).repeat(dataArray.shape[1], axis =1), # DFO offset 2
-                   np.arange(dataArray.shape[1]).reshape(-1,dataArray.shape[1]).repeat(dataArray.shape[0], axis=0), # lontigitudinal profile id 3
-                   np.arange(dataArray.shape[1]).reshape(-1,dataArray.shape[1]).repeat(dataArray.shape[0], axis=0)*data["tranStep"].values.reshape(-1,1) # trans Distance 4
+                   np.arange(dataArray.shape[1]).reshape(-1,dataArray.shape[1]).repeat(dataArray.shape[0], axis=0)*data["tranStep"].values.reshape(-1,1) # trans Distance 3
                    )
     
-    fig = px.imshow(dataArray, origin = "lower", labels = {"x": "Transverse (mm)", "y": "Longitudinal (mm)", "color": "Height (mm)"},
+    fig = px.imshow(dataArray, origin = "lower", 
+                    labels = {"x": "Longitudinal profile id", "y": "Transverse profile id", "color": "Height (mm)"},
                     y = data["id"], #np.arange(dataArray.shape[0])*lonStep,
                     aspect="auto", 
                     height = 800)
@@ -76,8 +76,7 @@ def surfPlot(data, dataArray, tranStep, lonStep):
                                                     "segID: %{customdata[0]:.0f}",
                                                     "DFO: %{customdata[1]:.0f}",
                                                     "OFFSET: %{customdata[2]:.0f}",
-                                                    "lonID: %{customdata[3]:.0f}",
-                                                    "transID: %{x:.0f}",
+                                                    "lonID: %{x:.0f}",
                                                     "transDist: %{customdata[3]:.0f} mm",
                                                     "Height: %{z} mm"])}])
     st.plotly_chart(fig, use_container_width=True, theme = None)
@@ -104,17 +103,16 @@ if check_password():
             if st.checkbox('Data for individual segment', value = True):
                 col11, col12 = st.columns(2)
                 with col11:
-                    segID = st.number_input("Segment ID", min_value=1, max_value=100, step= 1)
+                    segID = st.number_input("Segment ID", min_value=1, max_value=100, step= 1) # Segment ID
+                    data, tranStep, lonStep, dataArray = dataLoad(_conn=conn, segID=segID, mode = "1") # load data
                 with col12:
                     id_ = st.number_input("id", min_value=(segID-1)*900+2, max_value=segID*900+1, step = 1)
-                # Load data
-                data, tranStep, lonStep, dataArray = dataLoad(_conn=conn, segID=segID, mode = "1")
             else: 
                 col11, col12 = st.columns(2)
                 st.write('Data for multiple segments (selection of excessive data may leads to slow processing)')
                 st.write('id range: 1~90000')
                 with col11:
-                    idmin = st.number_input("id start", min_value=1, max_value=90000, value = 1, step= 1)
+                    idmin = st.number_input("id start", min_value=1, max_value=90000, value = 1, step= 1) # Note the difference since the id starts form 2 in the sql
                     idmax = st.number_input("id end", min_value=1, max_value=90000, value = 900, step= 1)
                     # Load data
                     data, tranStep, lonStep, dataArray = dataLoad(_conn=conn, idmin= idmin+1, idmax=idmax+1, mode ="2")
