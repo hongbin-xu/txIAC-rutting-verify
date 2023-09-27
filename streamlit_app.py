@@ -72,7 +72,7 @@ def surfPlot(data, dataArray, tranStep, lonStep):
                     aspect="auto", 
                     height = 800)
     fig.update(data=[{'customdata': customData,
-                      'hovertemplate': "<br>".join(["Line: %{customdata:.0f}",
+                      'hovertemplate': "<br>".join([#"Line: %{customdata:.0f}",
                                                     "Transverse: %{x:.0f} mm",
                                                     "Longitudinal: %{y:.0f} mm",
                                                     "Height: %{z} mm"])}])
