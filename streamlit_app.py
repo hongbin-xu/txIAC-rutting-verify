@@ -106,19 +106,19 @@ if check_password():
                     segID = st.number_input("Segment ID", min_value=1, max_value=100, step= 1) # Segment ID
                     data, tranStep, lonStep, dataArray = dataLoad(_conn=conn, segID=segID, mode = "1") # load data
                 with col12:
-                    id_ = st.number_input("id", min_value=(segID-1)*900+2, max_value=segID*900+1, step = 1)
+                    id_ = st.number_input("id", min_value=(segID-1)*900+1, max_value=segID*900, step = 1)
             else: 
                 col11, col12 = st.columns(2)
                 st.write('Data for multiple segments (selection of excessive data may leads to slow processing)')
                 st.write('id range: 1~90000')
                 with col11:
-                    idmin = st.number_input("id start", min_value=1, max_value=90000, value = 1, step= 1) # Note the difference since the id starts form 2 in the sql
+                    idmin = st.number_input("id start", min_value=1, max_value=90000, value = 1, step= 1)
                     idmax = st.number_input("id end", min_value=1, max_value=90000, value = 900, step= 1)
                     # Load data
-                    data, tranStep, lonStep, dataArray = dataLoad(_conn=conn, idmin= idmin+1, idmax=idmax+1, mode ="2")
+                    data, tranStep, lonStep, dataArray = dataLoad(_conn=conn, idmin= idmin, idmax=idmax, mode ="2")
                 with col12:
                     id_ = st.number_input("Line", min_value=idmin, max_value=idmax, step = 1)
-                    segID = id_//901+1
+                    segID = id_//900+1
             st.write("Route: "+ str(data["ROUTE_NAME"][0])+ ", DFO: "+str(data["DFO"].min())+ "~"+ str(data["DFO"].max()))
             # plot surface
             with st.container():
@@ -136,7 +136,7 @@ if check_password():
             st.plotly_chart(fig)
 
             # View and download data
-            st.download_button(label="Download profile", data=scanData_v1.to_csv().encode('utf-8'), file_name="transProfile_seg_" +str(segID)+"_scan_"+str(scanID)+".csv", mime = "csv")
+            st.download_button(label="Download profile", data=scanData_v1.to_csv().encode('utf-8'), file_name="transProfile_seg_" +str(segID)+"_scan_"+str(id_)+".csv", mime = "csv")
             if st.checkbox('Show raw transverse profile data'):
                 st.write(scanData_v1)
         
