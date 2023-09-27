@@ -75,7 +75,7 @@ def surfPlot(data, dataArray, tranStep, lonStep):
                       'hovertemplate': "<br>".join(["id: %{y:.0f}",
                                                     "segID: %{customdata[0]:.0f}",
                                                     "DFO: %{customdata[1]:.0f}",
-                                                    "OFFSET: %{customdata[2]:.0f}",
+                                                    "OFFSET: %{customdata[2]:.0f} mm",
                                                     "lonID: %{x:.0f}",
                                                     "transDist: %{customdata[3]:.0f} mm",
                                                     "Height: %{z} mm"])}])
