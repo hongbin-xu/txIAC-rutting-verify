@@ -1,9 +1,9 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
+import plotly.express as px
 
-#from streamlit_elements import elements, mui, html
-#import streamlit_authenticator as stauth
+# Authentication function
 def check_password():
     """Returns `True` if the user had the correct password."""
 
@@ -32,12 +32,69 @@ def check_password():
         # Password correct.
         return True
 
-if check_password():
-    st.set_page_config(
-        page_title='IAC-Rutting Verification', 
-        )
+@st.cache_data
+def mysql_connect(egine = 'mysql', type='sql'):
+    conn = st.experimental_connection(egine, type=type)
+    return conn
 
-    # Sidebar    
+@st.cache_data
+def dataLoad(_conn, segID=None, idmin = None, idmax=None, mode = "1"):
+    """
+    mode1: select for each segment
+    mode2: select for multiple segment
+    creating 2d array of the depth measurement
+    """
+    if mode =="1":
+        data = conn.query('SELECT * from pathway_rawFM365_SEP13 WHERE segID =' + str(segID) +';')
+    if mode =="2":
+        data = conn.query('SELECT * from pathway_rawFM365_SEP13 WHERE id BETWEEN '+ str(idmin) +' AND ' + str(idmax)+';')
+    tranStep = data["tranStep"].mean()
+    lonStep = data["lonStep"].mean()
+    dataArray = np.array([np.array(data["depth"][i].split(b',')).astype("float") for i in range(data.shape[0])])
+    
+    return data, tranStep, lonStep, dataArray
+
+@st.cache_data
+def scanDataExtra(segData, segID, scanID):
+    # Extract transverse profile
+    scanData = segData.loc[(segData["segID"]==segID)&(segData["scanID"]==scanID), ["tranStep", "depth"]].reset_index(drop=True)
+    scanData_v1 = pd.DataFrame({"DIST":scanData["tranStep"][0]*np.arange(1536), "Height":np.array(scanData["depth"][0].split(b",")).astype("float")})
+    return scanData_v1
+
+@st.cache_data
+def surfPlot(data, dataArray, tranStep, lonStep):
+    # hover information
+    # id, segID, scanID, dataNum, DFO + mm, transverse mm
+    customData=zip(data["segID"].values.reshape(dataArray.shape[0],-1).repeat(dataArray.shape[1], axis =1), # SegID
+                   data["DFO"].values.reshape(dataArray.shape[0],-1).repeat(dataArray.shape[1], axis =1), # DFO 
+                   #np.arange(dataArray.shape[0]).reshape(dataArray.shape[0],-1).repeat(dataArray.shape[1], axis =1), #scanID
+                   data["DFO"].values.reshape(dataArray.shape[0],-1).repeat(dataArray.shape[1], axis =1), # DFO offset
+                   np.arange(dataArray.shape[1]).reshape(-1,dataArray.shape[1]).repeat(dataArray.shape[0], axis=0), # lontigitudinal profile id
+                   np.arange(dataArray.shape[1]).reshape(-1,dataArray.shape[1]).repeat(dataArray.shape[0], axis=0)*data["tranStep"].values.reshape(-1,1) # trans Distance
+                   )
+    
+    fig = px.imshow(dataArray, origin = "lower", labels = {"x": "Transverse (mm)", "y": "Longitudinal (mm)", "color": "Height (mm)"},
+                    y = data["id"], #np.arange(dataArray.shape[0])*lonStep,
+                    aspect="auto", 
+                    height = 800)
+    fig.update(data=[{'customdata': customData,
+                      'hovertemplate': "<br>".join(["id: %{y:.0f}",
+                                                    "segID: %{customdata[0]:.0f}",
+                                                    "DFO: %{customdata[1]:.0f}",
+                                                    "OFFSET: %{customdata[0]:.0f}",
+                                                    "lonID: %{customdata[3]:.0f}",
+                                                    #"Line: %{customdata:.0f}",
+                                                    #"Transverse: %{x:.0f} mm",
+                                                    #"Longitudinal: %{y:.0f} mm",
+                                                    "Height: %{z} mm"])}])
+    st.plotly_chart(fig, use_container_width=True, theme = None)
+
+# Check authentication
+if check_password():    
+    # Page title
+    st.set_page_config(page_title='IAC-Rutting Verification')
+
+    # sidebar
     with st.sidebar:
         st.title("TxDOT Inter-Agency Contract")
         st.subheader("Rutting Measurement Verification")
@@ -45,43 +102,56 @@ if check_password():
         st.text("Presented by Hongbin Xu and Jorge Prozzi")
         st.text("The University of Texas at Austin")
     
-    # mysql connection
-    conn = st.experimental_connection('mysql', type='sql')
-    
-    
-    data_loading = st.text('Loading data...')
-    data1 = load_data(10000)
-    data_loading.text("Done!")
-    
-    col1, col2 = st.columns([3,4])
-    
+    # MySQL connection
+    conn = mysql_connect()
+    col1, col2 = st.columns(2, gap = "medium")
     with col1:
         with st.container():
             st.subheader("Suface")
-            col11, col12 = st.columns(2)
-            with col11:
-                segID = st.number_input("Segment ID", min_value=1, max_value=100, step= 1)
-            with col12:
-                scanID = st.number_input("Scan ID", min_value=0, max_value=899, step = 1)
-            st.write(segID)
-            #data = pd.read_csv()
-    
+            if st.checkbox('Data for individual segment', value = True):
+                col11, col12 = st.columns(2)
+                with col11:
+                    segID = st.number_input("Segment ID", min_value=1, max_value=100, step= 1)
+                with col12:
+                    scanID = st.number_input("Line", min_value=0, max_value=899, step = 1)
+                # Load data
+                data, tranStep, lonStep, dataArray = dataLoad(_conn=conn, segID=segID, mode = "1")
+            else: 
+                col11, col12 = st.columns(2)
+                st.write('Data for multiple segments (selection of excessive data may leads to slow processing)')
+                st.write('id range: 1~90000')
+                with col11:
+                    idmin = st.number_input("id start", min_value=1, max_value=90000, value = 1, step= 1)
+                    idmax = st.number_input("id end", min_value=1, max_value=90000, value = 900, step= 1)
+                    # Load data
+                    data, tranStep, lonStep, dataArray = dataLoad(_conn=conn, idmin= idmin+1, idmax=idmax+1, mode ="2")
+                with col12:
+                    idSelect = st.number_input("Line", min_value=idmin, max_value=idmax, step = 1)
+                    segID = data.loc[data["id"]==(idSelect+1), ["segID"]].reset_index(drop = True)["segID"][0]
+                    scanID = data.loc[data["id"]==(idSelect+1), ["scanID"]].reset_index(drop = True)["scanID"][0]
+            st.write("Route: "+ str(data["ROUTE_NAME"][0])+ ", DFO: "+str(data["DFO"].min())+ "~"+ str(data["DFO"].max()))
+            # plot surface
             with st.container():
-                # Some number in the range 0-23
-                hour_to_filter = st.slider('hour', 0, 23, 17)
-                filtered_data = data1[data1[DATE_COLUMN].dt.hour == hour_to_filter]
-                st.map(filtered_data)
-    
+                surfPlot(data=data, dataArray=dataArray, tranStep=tranStep, lonStep=lonStep)
+
     with col2:
         with st.container():
             st.subheader("Transverse Profile")
-    
-    
-    
-            hist_values = np.histogram(data1[DATE_COLUMN].dt.hour, bins=24, range=(0,24))[0]
-            st.bar_chart(hist_values)
+
+            # Extract transverse profile
+            #scanData = data.loc[data["scanID"]==scanID, ["tranStep", "depth"]].reset_index(drop=True)
+            #scanData_v1 = pd.DataFrame({"DIST":scanData["tranStep"][0]*np.arange(1536), "DEPTH":np.array(scanData["depth"][0].split(b",")).astype("float")})
+            scanData_v1 = scanDataExtra(segData = data,segID = segID, scanID=scanID)
+            
+            # Plot transverse profile
+            fig = px.line(scanData_v1, x="DIST", y="Height", labels = {"DIST": "Transverse Distance (mm)", "Height": "Height (mm}"}, template = "plotly_dark")
+            st.plotly_chart(fig)
+
+            # View and download data
+            st.download_button(label="Download profile", data=scanData_v1.to_csv().encode('utf-8'), file_name="transProfile_seg_" +str(segID)+"_scan_"+str(scanID)+".csv", mime = "csv")
             if st.checkbox('Show raw transverse profile data'):
-                st.write(data1)
+                st.write(scanData_v1)
+        
     
     
     
