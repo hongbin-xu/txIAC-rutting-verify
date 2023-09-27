@@ -69,16 +69,16 @@ def surfPlot(data, dataArray, tranStep, lonStep):
     fig = px.imshow(dataArray, origin = "lower", 
                     labels = {"x": "Longitudinal profile id", "y": "Transverse profile id", "color": "Height (mm)"},
                     y = data["id"], #np.arange(dataArray.shape[0])*lonStep,
+                    customdata = customData,
                     aspect="auto", 
                     height = 800)
-    fig.update(data=[{'customdata': customData,
-                      'hovertemplate': "<br>".join(["id: %{y:.0f}",
-                                                    "segID: %{customdata[0]:.0f}",
-                                                    "DFO: %{customdata[1]:.0f}",
-                                                    "OFFSET: %{customdata[2]:.0f}",
-                                                    "lonID: %{x:.0f}",
-                                                    "transDist: %{customdata[3]:.0f} mm",
-                                                    "Height: %{z} mm"])}])
+    fig.update(hovertemplate= "<br>".join(["id: %{y:.0f}",
+                                            "segID: %{customdata[0]:.0f}",
+                                            "DFO: %{customdata[1]:.0f}",
+                                            "OFFSET: %{customdata[2]:.0f}",
+                                            "lonID: %{x:.0f}",
+                                            "transDist: %{customdata[3]:.0f} mm",
+                                            "Height: %{z} mm"]))
     st.plotly_chart(fig, use_container_width=True, theme = None)
 
 # Check authentication
@@ -106,20 +106,19 @@ if check_password():
                     segID = st.number_input("Segment ID", min_value=1, max_value=100, step= 1) # Segment ID
                     data, tranStep, lonStep, dataArray = dataLoad(_conn=conn, segID=segID, mode = "1") # load data
                 with col12:
-                    id_ = st.number_input("id", min_value=(segID-1)*900+1, max_value=segID*900, step = 1)
+                    id_ = st.number_input("Transverse profile id", min_value=(segID-1)*900+1, max_value=segID*900, step = 1)
             else: 
                 col11, col12 = st.columns(2)
                 st.write('Data for multiple segments (selection of excessive data may leads to slow processing)')
-                st.write('id range: 1~90000')
                 with col11:
                     idmin = st.number_input("id start", min_value=1, max_value=90000, value = 1, step= 1)
                     idmax = st.number_input("id end", min_value=1, max_value=90000, value = 900, step= 1)
                     # Load data
                     data, tranStep, lonStep, dataArray = dataLoad(_conn=conn, idmin= idmin, idmax=idmax, mode ="2")
                 with col12:
-                    id_ = st.number_input("Line", min_value=idmin, max_value=idmax, step = 1)
+                    id_ = st.number_input("Transverse profile id", min_value=idmin, max_value=idmax, step = 1)
                     segID = id_//900+1
-            st.write("Route: "+ str(data["ROUTE_NAME"][0])+ ", DFO: "+str(data["DFO"].min())+ "~"+ str(data["DFO"].max()))
+            st.write(str(data["ROUTE_NAME"][0])+ ", DFO: "+str(data["DFO"].min())+ "~"+ str(data["DFO"].max()))
             # plot surface
             with st.container():
                 surfPlot(data=data, dataArray=dataArray, tranStep=tranStep, lonStep=lonStep)
