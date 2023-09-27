@@ -64,7 +64,7 @@ def surfPlot(data, dataArray, tranStep, lonStep):
                         data["DFO"].values.reshape(dataArray.shape[0],-1).repeat(dataArray.shape[1], axis =1), # DFO 1
                         data["OFFSET"].values.reshape(dataArray.shape[0],-1).repeat(dataArray.shape[1], axis =1), # DFO offset 2
                         np.arange(dataArray.shape[1]).reshape(-1,dataArray.shape[1]).repeat(dataArray.shape[0], axis=0)*data["tranStep"].values.reshape(-1,1) # trans Distance 3
-                        ])
+                        ], axis = -1)
     
     fig = px.imshow(dataArray, origin = "lower", 
                     labels = {"x": "Longitudinal profile id", "y": "Transverse profile id", "color": "Height (mm)"},
