@@ -84,16 +84,16 @@ def surfPlot(data, dataArray, tranStep, lonStep):
 # Check authentication
 if check_password():    
     # Page title
-    st.set_page_config(page_title='IAC-Rutting Verification')
+    st.set_page_config(page_title='IAC-Rutting Verification', layout="wide")
     conn = st.experimental_connection("mysql", type="sql")
 
     # sidebar
-    with st.sidebar:
-        st.title("TxDOT Inter-Agency Contract")
-        st.subheader("Rutting Measurement Verification")
-        st.text("Maintenance Devision")
-        st.text("Presented by Hongbin Xu and Jorge Prozzi")
-        st.text("The University of Texas at Austin")
+    #with st.sidebar:
+    #    st.title("TxDOT Inter-Agency Contract")
+    #    st.subheader("Rutting Measurement Verification")
+    #    st.text("Maintenance Devision")
+    #    st.text("Presented by Hongbin Xu and Jorge Prozzi")
+    #    st.text("The University of Texas at Austin")
     
     # MySQL connection
     col1, col2 = st.columns(2, gap = "medium")
