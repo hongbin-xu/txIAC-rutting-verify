@@ -112,17 +112,27 @@ if check_password():
     # Page title
     conn = st.experimental_connection("mysql", type="sql")
     
+    with st.sidebar:
+        st.write("Profile range")
+        col11, col12 = st.columns(2)
+        with col11:
+            idmin = st.number_input("id start", min_value=1, max_value=90000-1, value = 1, step= 1)
+        with col12:
+            idmax = st.number_input("id end", min_value=idmin, max_value=min(90000, idmin + 4499), value = idmin+50, step= 1)
+        # Load data
+        if st.button("Update"):
+            st.session_state.data, st.session_state.height_max = dataLoad(_conn=conn, idmin= idmin, idmax=idmax)
+       
+        st.write("Transverse and longitudinal profile")
+        id_ = st.number_input("Transverse profile", min_value=idmin, max_value=idmax, step = 1)
+        segID = id_//900+1
+        id_x = st.number_input("Longitudinal profile", min_value=0, max_value=1536,value=0, step = 1)
+
     # MySQL connection
     col1, col2 = st.columns(2, gap = "medium")
     with col1:
         with st.container():
             st.subheader("Suface")
-            col11, col12 = st.columns(2)
-            with col11:
-                idmin = st.number_input("id start", min_value=1, max_value=90000-1, value = 1, step= 1)
-            with col12:
-                idmax = st.number_input("id end", min_value=idmin, max_value=min(90000, idmin + 4499), value = idmin+50, step= 1)
-
             # Load data
             if st.button("Update"):
                 st.session_state.data, st.session_state.height_max = dataLoad(_conn=conn, idmin= idmin, idmax=idmax)
@@ -136,18 +146,14 @@ if check_password():
         with col2:
             with st.container():
                 st.subheader("Transverse Profile")
-                id_ = st.number_input("Transverse profile", min_value=idmin, max_value=idmax, step = 1)
-                segID = id_//900+1
                 #if st.button("Update transverse profile"):
                 # Extract transverse profile
                 scanData_v1 = transExtrac(segData = st.session_state.data, id=id_, max_val = st.session_state.height_max)
-
                 # View and download data
                 st.download_button(label="Download transverse profile", data=scanData_v1.to_csv().encode('utf-8'), file_name="transProfile_seg_" +str(segID)+"_scan_"+str(id_)+".csv", mime = "csv")
 
             with st.container():
                 st.subheader("Longitudinal Profile")
-                id_x = st.number_input("Longitudinal profile", min_value=0, max_value=1536,value=0, step = 1)
 
                 # Extract transverse profile
                 scanData_v2 = lonExtrac(segData = st.session_state.data, id=id_x, max_val = st.session_state.height_max)
